@@ -56,11 +56,23 @@ c_4 <- left_join(c_3, c_volumeb, by = NULL)
 c_5 <- left_join(c_4, c_volumed, by = NULL)
 c_6 <- left_join(c_5, c_wa, by = NULL)
 
-# Add conditional 1 or 0 for if close was higher than open
+testf <- function(column) {
+  index = 0
+  v = c()
+  while (index < (nrow(c_9) - 2)) {
+    x = ifelse(column[index] < column[index + 1], 1, 0)
+    v <- append(v, x)
+    index = index + 1
+  }
+  return(v)
+}
+
+# Add conditional 1 or 0 for if tomorrows wp is higher than todays
 c_7 <- c_6 %>%
   mutate(
-    Open_Close_Increase = ifelse(Close>Open, 1, 0)
+    WP_Increase = testf(Weighted_Price)
   )
+
 
 # add rolling averages
 c_7$ma10 = rollmean(c_7$Weighted_Price,10,mean,align='right',fill=NA)
@@ -81,3 +93,6 @@ c_9 <- c_8 %>%
   mutate(
     RSI_GreaterThan_50 = ifelse(rsi>50, 1, 0)
   )
+
+c_10 <- na.omit(c_9)
+c_11 <- c_10[-nrow(c_10),]
