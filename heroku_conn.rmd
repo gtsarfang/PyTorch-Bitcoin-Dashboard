@@ -1,0 +1,66 @@
+---
+title: "Heroku Connection"
+author: "Elvin Carranza"
+date: "8/22/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+# R Database interface package: defines communication between R and relational dtabase management systems
+library(DBI)
+```
+
+```{r}
+#Heroku database credentials, connecting to the database
+con <- dbConnect(RPostgres::Postgres(), 
+                 dbname = 'dfnetmd1n7fbma',
+                 host = 'ec2-52-22-94-132.compute-1.amazonaws.com',
+                 port = '5432',
+                 user = 'thghwbkqllzjgg',
+                 password = 'b392461c3c4ab865b0870dbf357b4a1c0b7d249c233de582a9941c7129761dd4')
+```
+
+```{r}
+#listing tables in the database
+print(dbListTables(con))
+#listing the fields for hist_100days table
+print(dbListFields(con,"hist_100days"))
+```
+
+```{r}
+#fetching all results from hist_100days table and returning it in a R dataframe
+res <- dbSendQuery(con, "SELECT * FROM hist_100days")
+hist_100days_df <- dbFetch(res)
+```
+
+```{r}
+hist_100days_df
+```
+
+```{r}
+#cleaing results
+dbClearResult(res)
+#closing connection from heroku after all querys are done.
+dbDisconnect(con)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
